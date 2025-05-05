@@ -9,7 +9,7 @@
 
 constexpr std::size_t FACTOR = 100;
 
-int main(int argc, char** argv) {
+int main(int argc, char **argv) {
     if (argc != 3) {
         std::cerr << "Error: incorrect arguments! Usage: tape-sort in.txt out.txt!";
         return 1;

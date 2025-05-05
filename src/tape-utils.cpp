@@ -4,7 +4,8 @@
 
 #include "tape.h"
 
-tape_exception::tape_exception(std::string msg) : _msg(std::move(msg)) {}
+tape_exception::tape_exception(std::string msg) : _msg(std::move(msg)) {
+}
 
 const char *tape_exception::what() const noexcept {
     return _msg.c_str();
@@ -75,7 +76,3 @@ std::string cfg_parser::get_field(const std::string &field) {
     }
     return _data[field];
 }
-
-
-
-

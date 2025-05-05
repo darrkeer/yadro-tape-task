@@ -9,14 +9,16 @@
 
 tape::tape(const std::size_t capacity, const std::size_t buffer_capacity)
     : tape(capacity, buffer_capacity, get_tmp_file_name(),
-           std::ios::binary | std::ios::in | std::ios::out | std::ios::trunc) {}
+           std::ios::binary | std::ios::in | std::ios::out | std::ios::trunc) {
+}
 
 tape::tape(const std::size_t capacity, const std::size_t buffer_capacity, const std::string &path)
     : tape(capacity, buffer_capacity, path, std::ios::binary | std::ios::in | std::ios::out) {
     load_buffer();
 }
 
-tape::tape(const std::size_t capacity, const std::size_t buffer_capacity, const std::string &path, const std::ios::openmode mode)
+tape::tape(const std::size_t capacity, const std::size_t buffer_capacity, const std::string &path,
+           const std::ios::openmode mode)
     : _file(path, mode), _file_path(path), _data(new int[buffer_capacity]), _i(0),
       _buffer_capacity(buffer_capacity), _capacity(capacity) {
     if (!_file.is_open()) {
@@ -24,7 +26,7 @@ tape::tape(const std::size_t capacity, const std::size_t buffer_capacity, const 
     }
 }
 
-void tape::set_config_file(const std::string& file) {
+void tape::set_config_file(const std::string &file) {
     _config = tape_config(file);
 }
 
@@ -126,7 +128,8 @@ tape_config::tape_config(const std::string &config_file) {
     }
 }
 
-tape_config::tape_config() : READ_DELAY(0), WRITE_DELAY(0), SHIFT_DELAY(0) {}
+tape_config::tape_config() : READ_DELAY(0), WRITE_DELAY(0), SHIFT_DELAY(0) {
+}
 
 
 std::string tape_config::convert_to_binary_file(std::ifstream &file) {
@@ -137,7 +140,7 @@ std::string tape_config::convert_to_binary_file(std::ifstream &file) {
     }
     int x;
     while (file >> x) {
-        out.write(reinterpret_cast<char*>(&x), sizeof(int));
+        out.write(reinterpret_cast<char *>(&x), sizeof(int));
     }
     return filename;
 }

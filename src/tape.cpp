@@ -12,7 +12,9 @@ tape::tape(const std::size_t capacity, const std::size_t buffer_capacity)
            std::ios::binary | std::ios::in | std::ios::out | std::ios::trunc) {}
 
 tape::tape(const std::size_t capacity, const std::size_t buffer_capacity, const std::string &path)
-    : tape(capacity, buffer_capacity, path, std::ios::binary | std::ios::in | std::ios::out) {}
+    : tape(capacity, buffer_capacity, path, std::ios::binary | std::ios::in | std::ios::out) {
+    load_buffer();
+}
 
 tape::tape(const std::size_t capacity, const std::size_t buffer_capacity, const std::string &path, const std::ios::openmode mode)
     : _file(path, mode), _file_path(path), _data(new int[buffer_capacity]), _i(0),
@@ -125,3 +127,32 @@ tape_config::tape_config(const std::string &config_file) {
 }
 
 tape_config::tape_config() : READ_DELAY(0), WRITE_DELAY(0), SHIFT_DELAY(0) {}
+
+
+std::string tape_config::convert_to_binary_file(std::ifstream &file) {
+    std::string filename = tape::get_tmp_file_name();
+    std::ofstream out(filename, std::ios::binary);
+    if (!out.is_open()) {
+        throw tape_exception("Error: unable to create temp file!");
+    }
+    int x;
+    while (file >> x) {
+        out.write(reinterpret_cast<char*>(&x), sizeof(int));
+    }
+    return filename;
+}
+
+std::ostream &operator<<(std::ostream &stream, tape &t) {
+    std::size_t pos = t.head();
+    while (t.head() > 0) {
+        t.lshift();
+    }
+    while (t.head() < t.capacity()) {
+        stream << t.read() << ' ';
+        t.rshift();
+    }
+    while (t.head() > pos) {
+        t.lshift();
+    }
+    return stream;
+}

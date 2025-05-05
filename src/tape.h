@@ -12,6 +12,8 @@ public:
 
     tape_config(const std::string& config_file);
 
+    static std::string convert_to_binary_file(std::ifstream& file);
+
     tape_config(const tape_config& other) = default;
     tape_config(tape_config&& other) = default;
     tape_config& operator=(const tape_config& other) = default;
@@ -53,6 +55,10 @@ public:
     std::size_t head() const;
 
     std::string file_path() const;
+
+    friend std::ostream& operator<<(std::ostream& stream, tape& t);
+
+    friend tape_config;
 
 private:
     tape(std::size_t capacity, std::size_t buffer_capacity, const std::string& path, std::ios::openmode mode);

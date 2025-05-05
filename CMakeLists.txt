@@ -23,7 +23,7 @@ add_executable(tape-sort ./src/main.cpp)
 
 target_link_libraries(tape tape-utils)
 target_link_libraries(tape-algo tape)
-target_link_libraries(main tape-algo tape)
+target_link_libraries(tape-sort tape-algo tape)
 target_link_libraries(tape-test tape tape-algo GTest::gtest_main)
 
 include(GoogleTest)

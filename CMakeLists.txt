@@ -15,12 +15,16 @@ FetchContent_MakeAvailable(googletest)
 
 enable_testing()
 
+add_library(tape-algo STATIC src/tape-algo.h src/tape-algo.cpp)
 add_library(tape STATIC ./src/tape.h ./src/tape.cpp)
 add_library(tape-utils STATIC ./src/tape-utils.h ./src/tape-utils.cpp)
 add_executable(tape-test ./tests/tape-test.cpp)
+add_executable(tape-sort ./src/main.cpp)
 
 target_link_libraries(tape tape-utils)
-target_link_libraries(tape-test tape GTest::gtest_main)
+target_link_libraries(tape-algo tape)
+target_link_libraries(main tape-algo tape)
+target_link_libraries(tape-test tape tape-algo GTest::gtest_main)
 
 include(GoogleTest)
 gtest_discover_tests(tape-test)

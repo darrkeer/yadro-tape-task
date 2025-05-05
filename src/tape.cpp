@@ -8,21 +8,22 @@
 #include <thread>
 
 tape::tape(const std::size_t capacity, const std::size_t buffer_capacity)
-    : _file_path(get_tmp_file_name()), _data(new int[buffer_capacity]), _i(0),
+    : tape(capacity, buffer_capacity, get_tmp_file_name(),
+           std::ios::binary | std::ios::in | std::ios::out | std::ios::trunc) {}
+
+tape::tape(const std::size_t capacity, const std::size_t buffer_capacity, const std::string &path)
+    : tape(capacity, buffer_capacity, path, std::ios::binary | std::ios::in | std::ios::out) {}
+
+tape::tape(const std::size_t capacity, const std::size_t buffer_capacity, const std::string &path, const std::ios::openmode mode)
+    : _file(path, mode), _file_path(path), _data(new int[buffer_capacity]), _i(0),
       _buffer_capacity(buffer_capacity), _capacity(capacity) {
-    _file = std::fstream(_file_path, std::ios::binary | std::ios::in | std::ios::out | std::ios::trunc);
     if (!_file.is_open()) {
         throw tape_exception("Error while creating tape's file ot path: '" + file_path() + "'.");
     }
 }
 
-tape::tape(const std::size_t capacity, const std::size_t buffer_capacity, const std::string &path)
-    : tape(capacity, buffer_capacity) {
-    _config = tape_config(path);
-}
-
-tape::~tape() {
-    delete[] _data;
+void tape::set_config_file(const std::string& file) {
+    _config = tape_config(file);
 }
 
 std::string tape::get_tmp_file_name() {
@@ -34,14 +35,14 @@ void tape::load_buffer() {
     if (file_size(_file_path) - _file.tellg() < buffer_byte_size()) {
         return;
     }
-    if (!_file.read(reinterpret_cast<char *>(_data), buffer_byte_size())) {
+    if (!_file.read(reinterpret_cast<char *>(_data.get()), buffer_byte_size())) {
         throw tape_exception("Error: unable to read from file: '" + file_path() + "'!");
     }
 }
 
 void tape::update_buffer() {
     _file.seekp(buffer_start_byte(_i));
-    if (!_file.write(reinterpret_cast<char *>(_data), buffer_byte_size())) {
+    if (!_file.write(reinterpret_cast<char *>(_data.get()), buffer_byte_size())) {
         throw tape_exception("Error: unable to write in file: '" + file_path() + "'!");
     }
 }
@@ -49,7 +50,7 @@ void tape::update_buffer() {
 
 void tape::rshift() {
     std::this_thread::sleep_for(std::chrono::microseconds(_config.SHIFT_DELAY));
-    if (_i == capacity() - 1) {
+    if (_i == capacity()) {
         throw tape_exception("Error: tape head out of bounds!");
     }
     if ((_i + 1) % buffer_capacity() == 0) {
@@ -77,14 +78,13 @@ void tape::lshift() {
 
 int tape::read() const {
     std::this_thread::sleep_for(std::chrono::microseconds(_config.READ_DELAY));
-    return _data[_i % buffer_capacity()];
+    return _data.get()[_i % buffer_capacity()];
 }
 
 void tape::write(int value) {
     std::this_thread::sleep_for(std::chrono::microseconds(_config.WRITE_DELAY));
-    _data[_i % buffer_capacity()] = value;
+    _data.get()[_i % buffer_capacity()] = value;
 }
-
 
 std::size_t tape::buffer_capacity() const {
     return _buffer_capacity;
@@ -97,7 +97,6 @@ std::size_t tape::capacity() const {
 std::size_t tape::buffer_byte_size() const {
     return sizeof(int) * buffer_capacity();
 }
-
 
 std::size_t tape::buffer_start_byte(const std::size_t i) const {
     return (i - i % buffer_capacity()) * sizeof(int);
@@ -125,5 +124,4 @@ tape_config::tape_config(const std::string &config_file) {
     }
 }
 
-tape_config::tape_config() : READ_DELAY(0), WRITE_DELAY(0), SHIFT_DELAY(0) {
-}
+tape_config::tape_config() : READ_DELAY(0), WRITE_DELAY(0), SHIFT_DELAY(0) {}

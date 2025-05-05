@@ -31,7 +31,11 @@ public:
 
     tape(std::size_t capacity, std::size_t buffer_capacity, const std::string& path);
 
-    ~tape();
+    tape(const tape& other) = delete;
+    tape(tape&& other)  noexcept = default;
+    tape& operator=(const tape&) = delete;
+    tape& operator=(tape&&) noexcept = default;
+    ~tape() = default;
 
     void write(int value);
 
@@ -41,6 +45,8 @@ public:
 
     void rshift();
 
+    void set_config_file(const std::string& file);
+
     std::size_t buffer_byte_size() const;
     std::size_t buffer_capacity() const;
     std::size_t capacity() const;
@@ -49,6 +55,8 @@ public:
     std::string file_path() const;
 
 private:
+    tape(std::size_t capacity, std::size_t buffer_capacity, const std::string& path, std::ios::openmode mode);
+
     static std::string get_tmp_file_name();
     void load_buffer();
     void update_buffer();
@@ -57,7 +65,7 @@ private:
     std::fstream _file;
     tape_config _config;
     std::filesystem::path _file_path;
-    int* _data;
+    std::unique_ptr<int> _data;
     std::size_t _i;
     std::size_t _buffer_capacity;
     std::size_t _capacity;

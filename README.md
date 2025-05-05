@@ -4,12 +4,12 @@
 ленты (Tape). 
 Были реализованы классы:
 
-- `tape` - сама структура ленты с базовым набором команд.
-- `tape_config` - класс, реализующий хранение полей, который задаются в специальном конфигурационном файле.
-- `tape_exception` - свой класс ошибок.
-- `cfg_parser` - парсер конфигурационного файла
-- `tmp_path_creator` - вспомогательный класс, который создает папку со временными файлами в начале запуска, и удаляет её и все содержимое в конце.
-- `tape_algo` - класс, содержащий расширенный набор функций для работы с `tape`. В том числе там и находится метод сортировки `tape_algo::sort`.
+- [`tape`](https://github.com/darrkeer/yadro-tape-task/blob/b16c2aeb786be432360c4ca5660af8c8d6f6011d/src/tape.h#L30) - сама структура ленты с базовым набором команд.
+- [`tape_config`](https://github.com/darrkeer/yadro-tape-task/blob/b16c2aeb786be432360c4ca5660af8c8d6f6011d/src/tape.h#L9) - класс, реализующий хранение полей, который задаются в специальном конфигурационном файле.
+- [`tape_exception`](https://github.com/darrkeer/yadro-tape-task/blob/cea1a8765c848bb697df7b52f0e6eb763efb4404/src/tape-utils.h#L17) - класс ошибок.
+- [`cfg_parser`](https://github.com/darrkeer/yadro-tape-task/blob/cea1a8765c848bb697df7b52f0e6eb763efb4404/src/tape-utils.h#L27) - парсер конфигурационного файла
+- [`tmp_path_creator`](https://github.com/darrkeer/yadro-tape-task/blob/b16c2aeb786be432360c4ca5660af8c8d6f6011d/src/tape-utils.h#L8) - вспомогательный класс, который создает папку со временными файлами в начале запуска, и удаляет её и все содержимое в конце.
+- [`tape_algo`](https://github.com/darrkeer/yadro-tape-task/blob/cea1a8765c848bb697df7b52f0e6eb763efb4404/src/tape-algo.h#L5) - класс, содержащий расширенный набор функций для работы с `tape`. В том числе там и находится метод сортировки `tape_algo::sort`.
 
 ## Тесты
 
